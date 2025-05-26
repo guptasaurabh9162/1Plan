@@ -40,8 +40,8 @@ To get started with 1Plan, follow these steps:
 
 We love to hear from our users! If you have any questions, feedback, or need assistance, please reach out to us:
 
-- **GitHub**: [guptasaurabh9162](https://github.com/satendra03)
-- **Instagram**: [@guptasaurabh946](https://www.instagram.com/_satendra_03/)
+- **GitHub**: [guptasaurabh9162](https://github.com/guptasaurabh9162)
+- **Instagram**: [@guptasaurabh946](https://www.instagram.com/guptasaurabh946)
 
 ## License
 
