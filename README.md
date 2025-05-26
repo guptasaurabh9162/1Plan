@@ -4,7 +4,7 @@
 
 ## Overview
 
-JourneyJolt is an innovative AI-driven trip planner that aims to transform your travel experiences. By harnessing the power of advanced artificial intelligence, JourneyJolt generates personalized itineraries that cater to your unique preferences and interests, ensuring that every journey is memorable.
+1Plan is an innovative AI-driven trip planner that aims to transform your travel experiences. By harnessing the power of advanced artificial intelligence, JourneyJolt generates personalized itineraries that cater to your unique preferences and interests, ensuring that every journey is memorable.
 
 ## Key Features
 
