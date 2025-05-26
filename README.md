@@ -1,6 +1,6 @@
-# JourneyJolt: AI-Based Trip Planner
+# 1Plan:Travel with purpose vibe ease
 
-<!-- ![JourneyJolt Live](https://example.com/journeyjolt-logo.png) -->
+<!-- ![1Plan Live]-->
 
 ## Overview
 
@@ -30,9 +30,9 @@ JourneyJolt is an innovative AI-driven trip planner that aims to transform your 
 
 ## Getting Started
 
-To get started with JourneyJolt, follow these steps:
+To get started with 1Plan, follow these steps:
 
-1. Visit our [website](https://trip-planner-by-satendra.vercel.app/).
+1. Visit our [website](https://inspiring-arithmetic-5111c6.netlify.app/).
 2. Sign up to create your personalized travel profile.
 3. Input your travel preferences and let our AI generate your custom itinerary.
 
@@ -40,8 +40,8 @@ To get started with JourneyJolt, follow these steps:
 
 We love to hear from our users! If you have any questions, feedback, or need assistance, please reach out to us:
 
-- **GitHub**: [satendra03](https://github.com/satendra03)
-- **Instagram**: [@_satendra_03](https://www.instagram.com/_satendra_03/)
+- **GitHub**: [guptasaurabh9162](https://github.com/satendra03)
+- **Instagram**: [@guptasaurabh946](https://www.instagram.com/_satendra_03/)
 
 ## License
 
@@ -57,5 +57,5 @@ Special thanks to all our beta testers and early adopters for their invaluable f
 
 ---
 
-JourneyJolt - Turning your travel dreams into reality with the power of AI.
+1Plan - Turning your travel dreams into reality with the power of AI.
 # 1Plan
