@@ -58,3 +58,4 @@ Special thanks to all our beta testers and early adopters for their invaluable f
 ---
 
 JourneyJolt - Turning your travel dreams into reality with the power of AI.
+# 1Plan
