@@ -1,0 +1,13 @@
+const buttonCards = [
+  { icon: Calendar, text: "When To Meet", link: siteLinks.calendar },
+  { 
+    icon: MapPin, 
+    text: "Where To Meet", 
+    link: "https://tripacho.com",
+    newTab: true 
+  },
+  { icon: Gift, text: "Rewards", link: siteLinks.rewards },
+  { icon: Leaf, text: "Eco-Track", link: siteLinks.ecoTrack },
+  { icon: Book, text: "ScrapBook", link: siteLinks.scrapBook },
+  { icon: CheckSquare, text: "ToDo", link: siteLinks.todo }
+];

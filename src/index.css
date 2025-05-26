@@ -1,30 +1,33 @@
+/* === Must be at the top === */
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 
+/* === Tailwind Directives === */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Ensure the whole page is full screen */
+/* === Base Styling === */
 html, body {
   height: 100%;
   width: 100%;
   margin: 0;
   padding: 0;
-  background: var(--background);
+  background: hsl(var(--background));
+  font-family: 'Space Grotesk', sans-serif;
 }
 
-
+/* === Utility Containers === */
 .main-container {
-  min-height: 100vh;  /* Full viewport height */
-  width: 100vw;       /* Full viewport width */
+  min-height: 100vh;
+  width: 100vw;
   display: flex;
   flex-direction: column;
-  margin: 0;          /* Remove default margin if any */
-  padding: 0;         /* Ensure no padding issues */
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
 
-
+/* === CSS Variables for Theming === */
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -82,35 +85,17 @@ html, body {
   }
 }
 
-/* @layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-} */
-
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
-body {
-  font-family: 'Space Grotesk', sans-serif;
-}
-
+/* === Utility Effects & Animations === */
 .parallax {
   perspective: 1px;
   height: 100vh;
   overflow-x: hidden;
   overflow-y: auto;
-  margin: 0;
-  padding: 0;
 }
 
 .parallax__layer {
   position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  inset: 0;
 }
 
 .parallax__layer--back {
@@ -149,15 +134,8 @@ body {
 }
 
 @keyframes floating {
-  0% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-  100% {
-    transform: translateY(0px);
-  }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 
 .glow-effect {
@@ -165,12 +143,8 @@ body {
 }
 
 @keyframes glow {
-  0%, 100% {
-    text-shadow: 0 0 10px rgba(66, 153, 225, 0.5);
-  }
-  50% {
-    text-shadow: 0 0 20px rgba(66, 153, 225, 0.8);
-  }
+  0%, 100% { text-shadow: 0 0 10px rgba(66, 153, 225, 0.5); }
+  50% { text-shadow: 0 0 20px rgba(66, 153, 225, 0.8); }
 }
 
 .pop-in {
@@ -197,14 +171,8 @@ body {
 .animated-background::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: 
-    radial-gradient(circle at center, 
-      rgba(76, 175, 80, 0.2) 0%,
-      rgba(76, 175, 80, 0) 70%);
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(76, 175, 80, 0.2) 0%, rgba(76, 175, 80, 0) 70%);
   animation: plantLife 10s infinite;
   opacity: 0.5;
 }
@@ -212,27 +180,19 @@ body {
 @keyframes plantLife {
   0% {
     transform: scale(0.1);
-    background: radial-gradient(circle at center, 
-      rgba(76, 175, 80, 0.3) 0%,
-      rgba(76, 175, 80, 0) 70%);
+    background: radial-gradient(circle at center, rgba(76, 175, 80, 0.3) 0%, rgba(76, 175, 80, 0) 70%);
   }
   40% {
     transform: scale(1);
-    background: radial-gradient(circle at center, 
-      rgba(76, 175, 80, 0.5) 0%,
-      rgba(76, 175, 80, 0) 70%);
+    background: radial-gradient(circle at center, rgba(76, 175, 80, 0.5) 0%, rgba(76, 175, 80, 0) 70%);
   }
   60% {
     transform: scale(1.2);
-    background: radial-gradient(circle at center, 
-      rgba(244, 67, 54, 0.3) 0%,
-      rgba(244, 67, 54, 0) 70%);
+    background: radial-gradient(circle at center, rgba(244, 67, 54, 0.3) 0%, rgba(244, 67, 54, 0) 70%);
   }
   100% {
     transform: scale(1.5);
-    background: radial-gradient(circle at center, 
-      rgba(244, 67, 54, 0.1) 0%,
-      rgba(244, 67, 54, 0) 70%);
+    background: radial-gradient(circle at center, rgba(244, 67, 54, 0.1) 0%, rgba(244, 67, 54, 0) 70%);
   }
 }
 
@@ -241,10 +201,6 @@ body {
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }

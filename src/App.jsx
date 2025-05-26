@@ -46,8 +46,8 @@ function App() {
           <Route path="/" element={<Hero />} />
           <Route path="/plan-a-trip" element={<CreateTrip />} />
           <Route path="/eco-track" element={<EcoTrack />} />
-          <Route path="/my-rewards" element={<Rewards />} />
-          <Route path="/scrap-book" element={<ScrapBook />} />
+          <Route path="/rewards" element={<Rewards />} />
+          <Route path="/scrapBook" element={<ScrapBook />} />
           <Route path="/todo" element={<ToDo />} />
           <Route path="/wanderlist" element={<Wanderlist />} />
           <Route path="/upcoming-event" element={<UpcomingEvents />} />
@@ -58,7 +58,7 @@ function App() {
 
           {/* Calendar & MatchWithFriends Toggle */}
           <Route
-            path="/my-calendar"
+            path="/calendar"
             element={
               currentView === "calendar" ? (
                 <Calendar onMatchClick={() => setCurrentView("match")} />

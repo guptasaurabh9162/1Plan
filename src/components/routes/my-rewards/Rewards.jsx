@@ -146,10 +146,11 @@ function App() {
   // Leaderboard data - optimized with useMemo
   const leaderboardData = useMemo(() => [
     { name: 'You', points: points, rank: 1 },
-    { name: 'Alex', points: Math.floor(points * 0.9), rank: 2 },
-    { name: 'Sarah', points: Math.floor(points * 0.8), rank: 3 },
-    { name: 'Mike', points: Math.floor(points * 0.7), rank: 4 },
-    { name: 'Emma', points: Math.floor(points * 0.6), rank: 5 },
+    { name: 'Arjun', points: Math.floor(points * 0.9), rank: 2 },
+    { name: 'Priya', points: Math.floor(points * 0.8), rank: 3 },
+    { name: 'Rahul', points: Math.floor(points * 0.7), rank: 4 },
+    { name: 'Ananya', points: Math.floor(points * 0.6), rank: 5 },
+    
   ], [points]);
 
   // Categories - memoized

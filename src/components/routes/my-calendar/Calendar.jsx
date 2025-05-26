@@ -26,7 +26,8 @@ function CalendarApp({ onMatchClick }) {
   }, [userId, events]);
 
   useEffect(() => {
-    if (window.webkitSpeechRecognition) {
+    // Initialize speech recognition on component mount
+    if ('webkitSpeechRecognition' in window) {
       const recognition = new window.webkitSpeechRecognition();
       recognition.continuous = true;
       recognition.interimResults = false;
@@ -37,20 +38,51 @@ function CalendarApp({ onMatchClick }) {
         handleVoiceCommand(transcript);
       };
 
-      recognition.onerror = () => {
-        toast.error('Speech recognition failed');
+      recognition.onerror = (event) => {
+        console.error('Speech recognition error:', event.error);
+        toast.error(`Speech recognition error: ${event.error}`);
         setIsListening(false);
       };
 
       recognition.onend = () => {
         if (isListening) {
+          // Restart if we're still supposed to be listening
           recognition.start();
         }
       };
 
       setRecognition(recognition);
+    } else {
+      toast.error('Speech recognition is not supported in your browser');
     }
-  }, [isListening]);
+
+    // Cleanup on unmount
+    return () => {
+      if (recognition) {
+        recognition.onend = null;
+        recognition.abort();
+      }
+    };
+  }, []);
+
+  // Start or stop listening when isListening changes
+  useEffect(() => {
+    if (recognition) {
+      if (isListening) {
+        try {
+          recognition.start();
+        } catch (error) {
+          console.error('Recognition start error:', error);
+        }
+      } else {
+        try {
+          recognition.stop();
+        } catch (error) {
+          console.error('Recognition stop error:', error);
+        }
+      }
+    }
+  }, [isListening, recognition]);
 
   const handleVoiceCommand = (transcript) => {
     console.log('Processing voice command:', transcript);
@@ -117,7 +149,7 @@ function CalendarApp({ onMatchClick }) {
   };
 
   const formatTime = (timeStr) => {
-    const match = timeStr.match(timeRegex);
+    const match = timeStr.match(/(\d{1,2})(?::(\d{2}))?\s*(am|pm)?/i);
     if (!match) return "00:00";
 
     let hours = parseInt(match[1]);
@@ -148,14 +180,12 @@ function CalendarApp({ onMatchClick }) {
       return;
     }
 
-    if (isListening) {
-      recognition.stop();
-      setIsListening(false);
-      toast.success('Voice input stopped');
-    } else {
-      recognition.start();
-      setIsListening(true);
+    setIsListening(!isListening);
+    
+    if (!isListening) {
       toast.success('Listening... Try saying "I have office on all weekdays except 9th and 10th April" or "Meeting on Monday from 2pm to 4pm"');
+    } else {
+      toast.success('Voice input stopped');
     }
   };
 
@@ -249,7 +279,7 @@ function CalendarApp({ onMatchClick }) {
   };
 
   return (
-    <div className="h-full bg-gray-900 text-white p-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white p-4 md:p-8">
       <Toaster position="top-right" />
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -260,7 +290,7 @@ function CalendarApp({ onMatchClick }) {
           <motion.h1
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600"
+            className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600"
           >
             Smart Calendar
           </motion.h1>
@@ -280,7 +310,7 @@ function CalendarApp({ onMatchClick }) {
         </div>
 
         <motion.div
-          className="bg-gray-800 rounded-xl p-6 shadow-2xl transform-gpu"
+          className="bg-gray-800/80 backdrop-blur-lg rounded-xl p-4 md:p-6 shadow-2xl border border-purple-500/20"
           style={{
             perspective: '1000px',
           }}
@@ -289,13 +319,20 @@ function CalendarApp({ onMatchClick }) {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="flex items-center gap-2 bg-purple-600 px-4 py-2 rounded-lg"
-              onClick={() => setCurrentMonth((prev) => (prev > 0 ? prev - 1 : 11))}
+              className="flex items-center gap-2 bg-purple-600 px-3 md:px-4 py-2 rounded-lg"
+              onClick={() => {
+                if (currentMonth > 0) {
+                  setCurrentMonth(currentMonth - 1);
+                } else {
+                  setCurrentMonth(11);
+                  setCurrentYear(currentYear - 1);
+                }
+              }}
             >
               <ChevronLeft size={20} />
-              Previous
+              <span className="hidden md:inline">Previous</span>
             </motion.button>
-            <h2 className="text-2xl font-semibold">
+            <h2 className="text-xl md:text-2xl font-semibold">
               {new Date(currentYear, currentMonth).toLocaleString('default', {
                 month: 'long',
               })} {currentYear}
@@ -303,15 +340,22 @@ function CalendarApp({ onMatchClick }) {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="flex items-center gap-2 bg-purple-600 px-4 py-2 rounded-lg"
-              onClick={() => setCurrentMonth((prev) => (prev < 11 ? prev + 1 : 0))}
+              className="flex items-center gap-2 bg-purple-600 px-3 md:px-4 py-2 rounded-lg"
+              onClick={() => {
+                if (currentMonth < 11) {
+                  setCurrentMonth(currentMonth + 1);
+                } else {
+                  setCurrentMonth(0);
+                  setCurrentYear(currentYear + 1);
+                }
+              }}
             >
-              Next
+              <span className="hidden md:inline">Next</span>
               <ChevronRight size={20} />
             </motion.button>
           </div>
 
-          <div className="grid grid-cols-7 gap-4 mb-4">
+          <div className="grid grid-cols-7 gap-2 md:gap-4 mb-4">
             {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
               <div key={day} className="text-center font-semibold text-purple-400">
                 {day}
@@ -320,7 +364,7 @@ function CalendarApp({ onMatchClick }) {
           </div>
 
           <motion.div
-            className="grid grid-cols-7 gap-4"
+            className="grid grid-cols-7 gap-2 md:gap-4"
             initial="hidden"
             animate="visible"
             variants={{
@@ -340,27 +384,27 @@ function CalendarApp({ onMatchClick }) {
                   hidden: { opacity: 0, y: 20 },
                   visible: { opacity: 1, y: 0 },
                 }}
-                whileHover={{ scale: 1.05, z: 20 }}
-                className={`relative flex flex-col items-center justify-center min-h-[80px] rounded-lg ${
+                whileHover={{ scale: 1.05, zIndex: 20 }}
+                className={`relative flex flex-col items-center justify-center min-h-[60px] md:min-h-[80px] rounded-lg ${
                   item
                     ? item.event
                       ? item.event.type === 'partial'
-                        ? 'bg-yellow-600 hover:bg-yellow-700'
-                        : 'bg-purple-600 hover:bg-purple-700'
-                      : 'bg-gray-700 hover:bg-gray-600'
+                        ? 'bg-gradient-to-br from-yellow-700 to-yellow-900 hover:from-yellow-600 hover:to-yellow-800'
+                        : 'bg-gradient-to-br from-purple-700 to-purple-900 hover:from-purple-600 hover:to-purple-800'
+                      : 'bg-gray-700/70 hover:bg-gray-600/70 backdrop-blur-sm'
                     : 'bg-transparent'
-                } cursor-pointer transition-colors duration-200`}
+                } cursor-pointer transition-all duration-200 border border-gray-700/50 shadow-lg`}
                 onClick={() => item && handleAddEvent(item)}
               >
                 {item && (
                   <>
-                    <span className="text-lg mb-2">{item.day}</span>
+                    <span className="text-lg font-medium mb-1">{item.day}</span>
                     {item.event && (
-                      <div className="text-sm bg-opacity-80 p-1 rounded w-full text-center">
-                        <div>{item.event.title}</div>
+                      <div className="text-sm bg-black/30 p-1 rounded w-full text-center backdrop-blur-sm">
+                        <div className="font-medium truncate px-1">{item.event.title}</div>
                         <div className="text-xs mt-1 flex items-center justify-center gap-1">
-                          <Clock size={12} />
-                          {item.event.time}
+                          <Clock size={10} />
+                          <span className="truncate">{item.event.time}</span>
                         </div>
                       </div>
                     )}
@@ -371,11 +415,11 @@ function CalendarApp({ onMatchClick }) {
           </motion.div>
         </motion.div>
 
-        <div className="flex justify-center gap-4 mt-8">
+        <div className="flex flex-wrap justify-center gap-3 md:gap-4 mt-8">
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-green-500 px-6 py-3 rounded-lg shadow-lg"
+            className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-600 px-4 md:px-6 py-3 rounded-lg shadow-lg"
             onClick={checkFreeDates}
           >
             <Calendar size={20} />
@@ -384,7 +428,7 @@ function CalendarApp({ onMatchClick }) {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 px-6 py-3 rounded-lg shadow-lg"
+            className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 px-4 md:px-6 py-3 rounded-lg shadow-lg"
             onClick={handleShareSchedule}
           >
             <Share2 size={20} />
@@ -393,7 +437,7 @@ function CalendarApp({ onMatchClick }) {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="flex items-center gap-2 bg-gradient-to-r from-indigo-500 to-purple-500 px-6 py-3 rounded-lg shadow-lg"
+            className="flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 px-4 md:px-6 py-3 rounded-lg shadow-lg"
             onClick={onMatchClick}
           >
             <Users size={20} />
@@ -419,44 +463,82 @@ function CalendarApp({ onMatchClick }) {
               className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6"
             >
               <motion.div
-                className="bg-gray-800 p-6 rounded-xl shadow-lg"
+                className="bg-gray-800/70 backdrop-blur-lg p-6 rounded-xl shadow-lg border border-green-500/20"
                 whileHover={{ scale: 1.02 }}
               >
-                <h3 className="text-xl font-semibold mb-4 text-green-400 text-center">
+                <h3 className="text-xl font-semibold mb-4 text-green-400 text-center flex items-center justify-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-green-400"></div>
                   Fully Free Dates
                 </h3>
-                <ul className="space-y-2">
-                  {freeDates.fully?.map((date, index) => (
-                    <li
-                      key={index}
-                      className="text-gray-300 bg-gray-700 p-2 rounded text-center"
-                    >
-                      {new Date(date).toLocaleDateString()}
-                    </li>
-                  ))}
-                </ul>
+                {freeDates.fully?.length > 0 ? (
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                    {freeDates.fully?.map((date, index) => (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ 
+                          opacity: 1, 
+                          scale: 1,
+                          transition: { delay: index * 0.05 }
+                        }}
+                        whileHover={{ scale: 1.05 }}
+                        className="text-gray-300 bg-gray-700/70 backdrop-blur-sm p-2 rounded text-center border border-green-500/20 shadow-md"
+                      >
+                        {new Date(date).toLocaleDateString(undefined, { 
+                          month: 'short', 
+                          day: 'numeric' 
+                        })}
+                      </motion.div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-center text-gray-400">No fully free dates available</p>
+                )}
               </motion.div>
 
               <motion.div
-                className="bg-gray-800 p-6 rounded-xl shadow-lg"
+                className="bg-gray-800/70 backdrop-blur-lg p-6 rounded-xl shadow-lg border border-yellow-500/20"
                 whileHover={{ scale: 1.02 }}
               >
-                <h3 className="text-xl font-semibold mb-4 text-yellow-400 text-center">
+                <h3 className="text-xl font-semibold mb-4 text-yellow-400 text-center flex items-center justify-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
                   Partially Free Dates
                 </h3>
-                <ul className="space-y-2">
-                  {freeDates.partially?.map((item, index) => (
-                    <li
-                      key={index}
-                      className="text-gray-300 bg-gray-700 p-2 rounded text-center"
-                    >
-                      <div>{new Date(item.date).toLocaleDateString()}</div>
-                      <div className="text-sm text-yellow-300">
-                        Free: {item.freeTime.join(', ')}
-                      </div>
-                    </li>
-                  ))}
-                </ul>
+                {freeDates.partially?.length > 0 ? (
+                  <div className="space-y-3">
+                    {freeDates.partially?.map((item, index) => (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ 
+                          opacity: 1, 
+                          scale: 1,
+                          transition: { delay: index * 0.05 }
+                        }}
+                        whileHover={{ scale: 1.02 }}
+                        className="text-gray-300 bg-gray-700/70 backdrop-blur-sm p-3 rounded border border-yellow-500/20 shadow-md"
+                      >
+                        <div className="font-medium text-center mb-1">
+                          {new Date(item.date).toLocaleDateString(undefined, { 
+                            weekday: 'short',
+                            month: 'short', 
+                            day: 'numeric' 
+                          })}
+                        </div>
+                        <div className="flex flex-wrap gap-2 justify-center">
+                          {item.freeTime.map((time, timeIndex) => (
+                            <span key={timeIndex} className="text-sm bg-yellow-800/50 px-2 py-1 rounded text-yellow-300 flex items-center gap-1">
+                              <Clock size={12} />
+                              {time}
+                            </span>
+                          ))}
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-center text-gray-400">No partially free dates available</p>
+                )}
               </motion.div>
             </motion.div>
           )}
@@ -466,39 +548,50 @@ function CalendarApp({ onMatchClick }) {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4"
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+              onClick={() => setShowShareModal(false)}
             >
-              <div className="bg-gray-800 p-8 rounded-xl max-w-md w-full">
-                <h3 className="text-2xl font-bold mb-4 text-center">Share Your Schedule</h3>
-                <div className="flex flex-col items-center gap-4">
-                  <QRCodeSVG
-                    value={userId}
-                    size={200}
-                    level="H"
-                    className="bg-white p-2 rounded-lg"
-                  />
-                  <div className="flex items-center gap-2 bg-gray-700 p-2 rounded-lg w-full">
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: -20, opacity: 0 }}
+                className="bg-gray-800/90 backdrop-blur-lg p-8 rounded-xl max-w-md w-full border border-purple-500/20 shadow-2xl"
+                onClick={e => e.stopPropagation()}
+              >
+                <h3 className="text-2xl font-bold mb-6 text-center bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400">
+                  Share Your Schedule
+                </h3>
+                <div className="flex flex-col items-center gap-6">
+                  <div className="bg-white p-3 rounded-lg shadow-lg">
+                    <QRCodeSVG
+                      value={userId}
+                      size={200}
+                      level="H"
+                      className="rounded"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2 bg-gray-700/70 p-2 rounded-lg w-full border border-gray-600/50">
                     <input
                       type="text"
                       value={userId}
                       readOnly
-                      className="bg-transparent flex-1 outline-none"
+                      className="bg-transparent flex-1 outline-none px-2 font-mono text-sm"
                     />
                     <button
                       onClick={copyUserId}
                       className="p-2 hover:bg-gray-600 rounded-lg transition-colors"
                     >
-                      {copied ? <Check size={20} /> : <Copy size={20} />}
+                      {copied ? <Check size={20} className="text-green-400" /> : <Copy size={20} />}
                     </button>
                   </div>
                   <button
                     onClick={() => setShowShareModal(false)}
-                    className="w-full bg-purple-600 py-2 rounded-lg hover:bg-purple-700 transition-colors"
+                    className="w-full bg-purple-600 py-2 rounded-lg hover:bg-purple-500 transition-colors"
                   >
                     Close
                   </button>
                 </div>
-              </div>
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>

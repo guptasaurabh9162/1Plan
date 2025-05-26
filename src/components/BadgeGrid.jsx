@@ -1,6 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { useStore } from '../store/useStore';
+import { useStore } from '../components/store/useStore';
+
+
+
 
 const BadgeGrid = ({ badges }) => {
   const userBadges = useStore(state => state.badges);

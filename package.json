@@ -24,9 +24,11 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "dotenv": "^16.4.5",
-    "firebase": "^10.14.1",
-    "framer-motion": "^12.6.3",
+    "firebase": "^11.8.1",
+    "framer-motion": "^12.11.0",
     "groq-sdk": "^0.7.0",
+    "i18next": "^25.0.2",
+    "i18next-browser-languagedetector": "^8.1.0",
     "lucide-react": "^0.408.0",
     "next-themes": "^0.3.0",
     "qrcode.react": "^4.2.0",
@@ -38,6 +40,7 @@
     "react-dom": "^18.3.1",
     "react-google-places-autocomplete": "^4.0.1",
     "react-hot-toast": "^2.4.1",
+    "react-i18next": "^15.5.1",
     "react-icons": "^5.2.1",
     "react-masonry-css": "^1.0.16",
     "react-media-recorder": "^1.7.1",
@@ -50,7 +53,7 @@
     "tailwind-scrollbar-hide": "^2.0.0",
     "tailwindcss-animate": "^1.0.7",
     "uuid": "^11.1.0",
-    "zustand": "^5.0.3"
+    "zustand": "^5.0.5"
   },
   "devDependencies": {
     "@types/react": "^18.3.20",
@@ -64,6 +67,6 @@
     "postcss": "^8.4.39",
     "tailwindcss": "^3.4.6",
     "typescript": "^5.8.2",
-    "vite": "^5.3.4"
+    "vite": "^6.3.5"
   }
 }
